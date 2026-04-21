@@ -4,77 +4,86 @@
 
 @layer base {
   :root {
-    --background: 15 10% 6%;
-    --foreground: 30 15% 95%;
-
-    --card: 20 8% 10%;
-    --card-foreground: 30 15% 95%;
-
-    --popover: 20 8% 10%;
-    --popover-foreground: 30 15% 95%;
-
-    --primary: 25 95% 53%;
+    --background: 16 12% 5%;
+    --foreground: 30 20% 95%;
+    --card: 18 10% 9%;
+    --card-foreground: 30 20% 95%;
+    --popover: 18 10% 9%;
+    --popover-foreground: 30 20% 95%;
+    --primary: 24 95% 53%;
     --primary-foreground: 0 0% 5%;
-
-    --secondary: 20 8% 15%;
+    --secondary: 18 10% 14%;
     --secondary-foreground: 30 15% 85%;
-
-    --muted: 20 5% 18%;
-    --muted-foreground: 30 10% 55%;
-
-    --accent: 20 8% 18%;
+    --muted: 18 8% 16%;
+    --muted-foreground: 30 10% 50%;
+    --accent: 18 8% 16%;
     --accent-foreground: 30 15% 95%;
-
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-
-    --border: 20 8% 18%;
-    --input: 20 8% 15%;
-    --ring: 25 95% 53%;
-
-    --radius: 0.75rem;
-
-    --sidebar-background: 20 8% 8%;
-    --sidebar-foreground: 30 15% 85%;
-    --sidebar-primary: 25 95% 53%;
+    --border: 18 8% 16%;
+    --input: 18 8% 14%;
+    --ring: 24 95% 53%;
+    --radius: 0.875rem;
+    --sidebar-background: 16 12% 7%;
+    --sidebar-foreground: 30 15% 80%;
+    --sidebar-primary: 24 95% 53%;
     --sidebar-primary-foreground: 0 0% 5%;
-    --sidebar-accent: 20 8% 14%;
+    --sidebar-accent: 18 8% 12%;
     --sidebar-accent-foreground: 30 15% 85%;
-    --sidebar-border: 20 8% 14%;
-    --sidebar-ring: 25 95% 53%;
-
-    --orange: 25 95% 53%;
-    --orange-glow: 25 95% 53%;
+    --sidebar-border: 18 8% 13%;
+    --sidebar-ring: 24 95% 53%;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
   }
-
+  html {
+    scroll-behavior: smooth;
+  }
   body {
-    @apply bg-background text-foreground font-inter;
+    @apply bg-background text-foreground;
+    font-family: "Inter", sans-serif;
     background-image:
       radial-gradient(
-        ellipse at 20% 50%,
-        hsl(25 95% 53% / 0.04) 0%,
+        ellipse 80% 50% at 10% 0%,
+        hsl(24 95% 53% / 0.05) 0%,
         transparent 60%
       ),
       radial-gradient(
-        ellipse at 80% 20%,
-        hsl(25 95% 53% / 0.03) 0%,
+        ellipse 60% 40% at 90% 100%,
+        hsl(24 95% 53% / 0.03) 0%,
         transparent 50%
       );
     min-height: 100vh;
   }
-
   h1,
   h2,
   h3,
   h4,
   h5 {
     font-family: "Montserrat", sans-serif;
+  }
+  input,
+  select,
+  textarea {
+    color-scheme: dark;
+  }
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(18 8% 22%);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(18 8% 30%);
   }
 }
 
@@ -87,95 +96,173 @@
   }
 
   .glass {
-    background: hsl(20 8% 10% / 0.8);
-    backdrop-filter: blur(12px);
-    border: 1px solid hsl(20 8% 22%);
-  }
-
-  .glass-dark {
-    background: hsl(15 10% 6% / 0.9);
+    background: hsl(18 10% 9% / 0.85);
     backdrop-filter: blur(16px);
-    border: 1px solid hsl(20 8% 18%);
+    border: 1px solid hsl(18 8% 18%);
+  }
+  .glass-sidebar {
+    background: hsl(16 12% 7% / 0.98);
+    border-right: 1px solid hsl(18 8% 13%);
+  }
+  .glass-elevated {
+    background: hsl(18 10% 12% / 0.9);
+    border: 1px solid hsl(18 8% 22%);
   }
 
-  .orange-glow {
-    box-shadow:
-      0 0 20px hsl(25 95% 53% / 0.3),
-      0 0 60px hsl(25 95% 53% / 0.1);
-  }
-
-  .orange-text-glow {
-    text-shadow: 0 0 20px hsl(25 95% 53% / 0.5);
-  }
-
-  .card-hover {
-    transition: all 0.2s ease;
-  }
-  .card-hover:hover {
-    transform: translateY(-2px);
-    border-color: hsl(25 95% 53% / 0.4);
-    box-shadow: 0 8px 32px hsl(25 95% 53% / 0.15);
-  }
-
-  .btn-orange {
-    background: linear-gradient(135deg, hsl(25 95% 53%), hsl(20 90% 45%));
-    color: hsl(0 0% 5%);
+  .btn-primary {
+    background: linear-gradient(135deg, hsl(24 95% 53%), hsl(20 90% 44%));
+    color: hsl(0 0% 8%);
     font-weight: 700;
     font-family: "Montserrat", sans-serif;
-    transition: all 0.2s;
-  }
-  .btn-orange:hover {
-    box-shadow: 0 0 20px hsl(25 95% 53% / 0.5);
-    transform: translateY(-1px);
-  }
-
-  .nav-item {
-    transition: all 0.15s ease;
-    border-radius: 0.75rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
-  }
-  .nav-item:hover {
-    background: hsl(20 8% 15%);
-    color: hsl(25 95% 53%);
-  }
-  .nav-item.active {
-    background: hsl(25 95% 53% / 0.15);
-    color: hsl(25 95% 53%);
-    border-left: 3px solid hsl(25 95% 53%);
-  }
-
-  .badge-verified {
-    background: linear-gradient(135deg, hsl(25 95% 53%), hsl(35 100% 60%));
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 6px;
+  }
+  .btn-primary:hover:not(:disabled) {
+    box-shadow:
+      0 0 28px hsl(24 95% 53% / 0.45),
+      0 4px 20px hsl(24 95% 53% / 0.2);
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+  }
+  .btn-primary:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+  .btn-primary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
   }
 
-  .donate-1 {
-    color: hsl(210 100% 70%);
+  .btn-ghost {
+    background: hsl(18 8% 13%);
+    color: hsl(30 15% 65%);
+    font-family: "Inter", sans-serif;
+    transition: all 0.15s;
+    border: 1px solid hsl(18 8% 18%);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
   }
-  .donate-2 {
-    color: hsl(280 100% 75%);
-  }
-  .donate-3 {
-    color: hsl(25 95% 53%);
+  .btn-ghost:hover {
+    background: hsl(18 8% 18%);
+    color: hsl(30 15% 88%);
+    border-color: hsl(18 8% 24%);
   }
 
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 4px;
+  .input-field {
+    background: hsl(18 8% 11%);
+    border: 1px solid hsl(18 8% 19%);
+    color: hsl(30 15% 90%);
+    font-family: "Inter", sans-serif;
+    font-size: 0.875rem;
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
+    outline: none;
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 10px;
   }
-  .scrollbar-thin::-webkit-scrollbar-track {
+  .input-field::placeholder {
+    color: hsl(30 10% 38%);
+  }
+  .input-field:focus {
+    border-color: hsl(24 95% 53% / 0.55);
+    box-shadow: 0 0 0 3px hsl(24 95% 53% / 0.1);
+  }
+
+  .card-base {
+    background: hsl(18 10% 9%);
+    border: 1px solid hsl(18 8% 15%);
+    border-radius: 1rem;
+  }
+  .card-interactive {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .card-interactive:hover {
+    border-color: hsl(24 95% 53% / 0.28);
+    box-shadow:
+      0 10px 40px hsl(24 95% 53% / 0.08),
+      0 2px 10px hsl(0 0% 0% / 0.25);
+    transform: translateY(-2px);
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 11px;
+    border-radius: 9px;
+    font-family: "Inter", sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: hsl(30 10% 48%);
+    transition: all 0.15s;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
     background: transparent;
+    border: none;
   }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: hsl(20 8% 25%);
-    border-radius: 2px;
+  .nav-link:hover {
+    background: hsl(18 8% 12%);
+    color: hsl(30 15% 82%);
+  }
+  .nav-link.active {
+    background: hsl(24 95% 53% / 0.12);
+    color: hsl(24 95% 58%);
+    font-weight: 600;
+    box-shadow: inset 2px 0 0 hsl(24 95% 53%);
   }
 
-  @keyframes fade-in {
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  .avatar-base {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+    background: hsl(24 95% 53% / 0.13);
+    color: hsl(24 95% 58%);
+    border: 1.5px solid hsl(24 95% 53% / 0.2);
+    flex-shrink: 0;
+  }
+
+  .label-xs {
+    font-size: 10px;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: hsl(30 10% 48%);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .section-title {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+  }
+
+  @keyframes fadeInUp {
     from {
       opacity: 0;
       transform: translateY(10px);
@@ -185,33 +272,74 @@
       transform: translateY(0);
     }
   }
-  @keyframes slide-in {
+  @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateX(-20px);
     }
     to {
       opacity: 1;
-      transform: translateX(0);
     }
   }
-  @keyframes pulse-orange {
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  @keyframes pulseOrange {
     0%,
     100% {
-      box-shadow: 0 0 0 0 hsl(25 95% 53% / 0.4);
+      box-shadow: 0 0 0 0 hsl(24 95% 53% / 0.35);
     }
     50% {
-      box-shadow: 0 0 0 8px hsl(25 95% 53% / 0);
+      box-shadow: 0 0 0 10px hsl(24 95% 53% / 0);
     }
   }
 
-  .animate-fade-in {
-    animation: fade-in 0.3s ease forwards;
+  .animate-fade-up {
+    animation: fadeInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
   }
-  .animate-slide-in {
-    animation: slide-in 0.3s ease forwards;
+  .animate-fade {
+    animation: fadeIn 0.2s ease both;
+  }
+  .animate-scale {
+    animation: scaleIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) both;
   }
   .animate-pulse-orange {
-    animation: pulse-orange 2s infinite;
+    animation: pulseOrange 2s infinite;
+  }
+
+  .stagger-1 {
+    animation-delay: 0.04s;
+  }
+  .stagger-2 {
+    animation-delay: 0.08s;
+  }
+  .stagger-3 {
+    animation-delay: 0.12s;
+  }
+  .stagger-4 {
+    animation-delay: 0.16s;
+  }
+  .stagger-5 {
+    animation-delay: 0.2s;
+  }
+
+  .glow-orange {
+    box-shadow: 0 0 24px hsl(24 95% 53% / 0.32);
+  }
+  .glow-text {
+    text-shadow: 0 0 24px hsl(24 95% 53% / 0.5);
+  }
+  .divider {
+    height: 1px;
+    background: hsl(18 8% 16%);
+  }
+  .orange-gradient {
+    background: linear-gradient(135deg, hsl(24 95% 53%), hsl(20 90% 44%));
   }
 }

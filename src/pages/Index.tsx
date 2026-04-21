@@ -17,17 +17,19 @@ export default function Index() {
   const [user, setUser] = useState<User | null>(null);
   const [page, setPage] = useState('home');
   const [checking, setChecking] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) { setChecking(false); return; }
     api.me().then(r => {
       if (r.user) setUser(r.user);
+      else localStorage.removeItem('token');
       setChecking(false);
-    }).catch(() => setChecking(false));
+    }).catch(() => { setChecking(false); });
   }, []);
 
-  const handleAuth = (u: object, _token: string) => {
+  const handleAuth = (u: object) => {
     setUser(u as User);
     setPage('home');
   };
@@ -38,14 +40,22 @@ export default function Index() {
     setPage('home');
   };
 
+  const handleNav = (id: string) => {
+    setPage(id);
+    setSidebarOpen(false);
+  };
+
   if (checking) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl btn-orange flex items-center justify-center animate-pulse-orange">
-            <Icon name="Shield" size={24} />
+          <div className="w-14 h-14 rounded-2xl btn-primary flex items-center justify-center animate-pulse-orange glow-orange">
+            <Icon name="Shield" size={26} />
           </div>
-          <p className="text-muted-foreground font-inter text-sm">Загрузка...</p>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Icon name="Loader2" size={16} className="animate-spin" />
+            <span className="font-inter text-sm">Загрузка...</span>
+          </div>
         </div>
       </div>
     );
@@ -55,28 +65,46 @@ export default function Index() {
 
   const renderPage = () => {
     switch (page) {
-      case 'home': return <HomePage user={user} onNav={setPage} />;
-      case 'chat': return <ChatPage user={user} />;
-      case 'videos': return <VideosPage user={user} />;
-      case 'grades': return <GradesPage user={user} />;
-      case 'tasks': return <TasksPage user={user} />;
-      case 'donate': return <DonatePage user={user} />;
+      case 'home':    return <HomePage user={user} onNav={handleNav} />;
+      case 'chat':    return <ChatPage user={user} />;
+      case 'videos':  return <VideosPage user={user} />;
+      case 'grades':  return <GradesPage user={user} />;
+      case 'tasks':   return <TasksPage user={user} />;
+      case 'donate':  return <DonatePage user={user} />;
       case 'profile': return <ProfilePage user={user} onUpdate={setUser} />;
       case 'admin':
-        return user.role === 'superadmin'
-          ? <AdminPanel user={user} onUpdate={setUser} />
-          : <div className="p-6 text-center text-muted-foreground">
-              <Icon name="Lock" size={40} className="mx-auto mb-3 opacity-30" />
-              <p className="font-inter">Нет доступа</p>
-            </div>;
-      default: return <HomePage user={user} onNav={setPage} />;
+        if (user.role !== 'superadmin') return (
+          <div className="flex items-center justify-center min-h-[60vh] text-muted-foreground">
+            <div className="text-center">
+              <Icon name="Lock" size={48} className="mx-auto mb-3 opacity-10" />
+              <p className="font-montserrat font-bold">Нет доступа</p>
+              <p className="text-sm font-inter mt-1 opacity-60">Только для Главного Администратора</p>
+            </div>
+          </div>
+        );
+        return <AdminPanel user={user} onUpdate={setUser} />;
+      default: return <HomePage user={user} onNav={handleNav} />;
     }
   };
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar active={page} onNav={setPage} user={user} onLogout={handleLogout} />
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-40 bg-black/60 lg:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      <div className={`fixed lg:sticky top-0 z-50 lg:z-auto h-screen transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <Sidebar active={page} onNav={handleNav} user={user} onLogout={handleLogout} />
+      </div>
+
       <main className="flex-1 min-w-0 overflow-y-auto">
+        <div className="lg:hidden flex items-center gap-3 px-4 py-3 border-b sticky top-0 z-30"
+          style={{ background: 'hsl(16 12% 7%)', borderColor: 'hsl(18 8% 13%)' }}>
+          <button onClick={() => setSidebarOpen(true)} className="btn-ghost p-2 rounded-xl">
+            <Icon name="Menu" size={20} />
+          </button>
+          <span className="font-montserrat font-bold text-sm" style={{ color: 'hsl(24 95% 58%)' }}>AdminHub</span>
+        </div>
         {renderPage()}
       </main>
     </div>

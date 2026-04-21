@@ -4,112 +4,148 @@ import type { User } from '@/lib/api';
 import Icon from '@/components/ui/icon';
 
 interface Props { user: User }
-
 type Donation = { id: number; amount: number; level: number; note: string; expires_at: string | null; created_at: string; user: { id: number; username: string }; granted_by: { id: number; username: string } };
 
 const LEVELS = [
-  { level: 0, label: 'Базовый', icon: '⬜', color: '#6b7280', perks: ['Доступ к платформе'] },
-  { level: 1, label: 'Поддержка', icon: '💙', color: '#3b82f6', perks: ['Синий значок', 'Особый статус'] },
-  { level: 2, label: 'Продвинутый', icon: '💜', color: '#a855f7', perks: ['Фиолетовый значок', 'Приоритет'] },
-  { level: 3, label: 'Элита', icon: '🔥', color: '#f97316', perks: ['Огненный значок', 'VIP-доступ', 'Эксклюзивный чат'] },
+  { level: 0, label: 'Базовый',     icon: '⬜', color: '#6b7280', perks: ['Доступ к платформе', 'Основные функции'] },
+  { level: 1, label: 'Поддержка',   icon: '💙', color: '#60a5fa', perks: ['Синий значок 💙', 'Особый статус', 'Приоритет в чате'] },
+  { level: 2, label: 'Продвинутый', icon: '💜', color: '#a78bfa', perks: ['Фиолетовый значок 💜', 'VIP-чат', 'Расширенный профиль'] },
+  { level: 3, label: 'Элита',       icon: '🔥', color: 'hsl(24 95% 56%)', perks: ['🔥 Огненный значок', 'Все привилегии', 'Эксклюзивный доступ'] },
 ];
 
 export default function DonatePage({ user }: Props) {
   const [donations, setDonations] = useState<Donation[]>([]);
-  const myDonateLevel = user.donate_level || 0;
+  const [fetching, setFetching] = useState(true);
+  const myLevel = user.donate_level || 0;
 
-  useEffect(() => { api.getDonations().then(r => setDonations(r.donations || [])); }, []);
+  useEffect(() => {
+    api.getDonations().then(r => { setDonations(r.donations || []); setFetching(false); });
+  }, []);
 
   const myDonations = donations.filter(d => d.user?.id === user.id);
+  const currentLevel = LEVELS[Math.min(myLevel, 3)];
 
   return (
-    <div className="p-6 animate-fade-in space-y-6">
+    <div className="p-6 animate-fade-up space-y-6">
       <div>
-        <h1 className="text-xl font-montserrat font-800">Донат-система</h1>
-        <p className="text-muted-foreground text-sm font-inter">Уровни поддержки и привилегии</p>
+        <h1 className="section-title">🎁 Донат-система</h1>
+        <p className="text-sm text-muted-foreground font-inter mt-0.5">Привилегии и уровни поддержки</p>
       </div>
 
-      {/* My status */}
-      <div className="glass rounded-xl p-5" style={{borderColor: LEVELS[myDonateLevel]?.color + '40'}}>
-        <div className="flex items-center gap-4">
-          <div className="text-4xl">{LEVELS[myDonateLevel]?.icon}</div>
-          <div>
-            <p className="text-xs text-muted-foreground font-inter uppercase tracking-wider mb-0.5">Ваш текущий уровень</p>
-            <p className="font-montserrat font-800 text-xl" style={{color: LEVELS[myDonateLevel]?.color}}>
-              {LEVELS[myDonateLevel]?.label}
+      {/* My status card */}
+      <div className="card-base p-5 animate-fade-up stagger-1"
+        style={{ borderColor: currentLevel.color + '30', boxShadow: `0 0 30px ${currentLevel.color}10` }}>
+        <div className="flex items-center gap-5">
+          <div className="text-5xl flex-shrink-0">{currentLevel.icon}</div>
+          <div className="flex-1">
+            <p className="label-xs">Ваш текущий уровень</p>
+            <p className="text-2xl font-montserrat font-black mt-0.5" style={{ color: currentLevel.color }}>
+              {currentLevel.label}
             </p>
-            <div className="flex gap-1.5 mt-1 flex-wrap">
-              {LEVELS[myDonateLevel]?.perks.map(p => (
-                <span key={p} className="text-[10px] px-2 py-0.5 rounded-full font-inter" style={{background: LEVELS[myDonateLevel]?.color + '15', color: LEVELS[myDonateLevel]?.color}}>
+            <div className="flex gap-1.5 mt-2 flex-wrap">
+              {currentLevel.perks.map(p => (
+                <span key={p} className="badge text-[10px]"
+                  style={{ background: currentLevel.color + '15', color: currentLevel.color }}>
                   {p}
                 </span>
               ))}
             </div>
           </div>
+          {myLevel === 0 && (
+            <div className="text-right text-xs text-muted-foreground font-inter max-w-[160px] leading-relaxed">
+              Уровни выдаёт Главный Администратор
+            </div>
+          )}
         </div>
-        {myDonateLevel === 0 && (
-          <p className="text-xs text-muted-foreground font-inter mt-3 pt-3 border-t border-border">
-            Уровни доната выдаются Главным Администратором. Обратитесь к нему для получения привилегий.
-          </p>
+
+        {/* Progress bar */}
+        {myLevel < 3 && (
+          <div className="mt-4">
+            <div className="flex justify-between text-[10px] text-muted-foreground font-inter mb-1.5">
+              <span>Прогресс до следующего уровня</span>
+              <span>{LEVELS[myLevel + 1]?.label}</span>
+            </div>
+            <div className="h-2 rounded-full overflow-hidden" style={{ background: 'hsl(18 8% 16%)' }}>
+              <div className="h-full rounded-full transition-all duration-700"
+                style={{ width: `${(myLevel / 3) * 100}%`, background: `linear-gradient(90deg, ${currentLevel.color}, ${LEVELS[Math.min(myLevel + 1, 3)].color})` }} />
+            </div>
+          </div>
         )}
       </div>
 
-      {/* Levels showcase */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {LEVELS.map(l => (
+      {/* Level cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {LEVELS.map((l, i) => (
           <div key={l.level}
-            className={`glass rounded-xl p-4 transition-all ${myDonateLevel === l.level ? 'ring-2' : ''}`}
-            style={myDonateLevel === l.level ? {ringColor: l.color, boxShadow: `0 0 20px ${l.color}25`} : {}}>
-            <div className="text-2xl mb-2">{l.icon}</div>
-            <p className="font-montserrat font-700 text-sm mb-1" style={{color: myDonateLevel >= l.level ? l.color : undefined}}>{l.label}</p>
-            <ul className="space-y-1">
+            className={`card-base p-4 transition-all animate-fade-up stagger-${i + 1} ${myLevel === l.level ? 'border-orange' : ''}`}
+            style={myLevel === l.level ? { boxShadow: `0 0 20px ${l.color}18`, borderColor: l.color + '40' } : {}}>
+            <div className="text-3xl mb-3">{l.icon}</div>
+            <p className="font-montserrat font-bold text-sm mb-2" style={{ color: myLevel >= l.level ? l.color : undefined }}>
+              {l.label}
+            </p>
+            <ul className="space-y-1.5">
               {l.perks.map(p => (
-                <li key={p} className="flex items-center gap-1.5 text-xs text-muted-foreground font-inter">
-                  <div className="w-1 h-1 rounded-full flex-shrink-0" style={{background: l.color}} />
+                <li key={p} className="flex items-start gap-1.5 text-[11px] text-muted-foreground font-inter">
+                  <div className="w-1 h-1 rounded-full mt-1.5 flex-shrink-0" style={{ background: l.color }} />
                   {p}
                 </li>
               ))}
             </ul>
-            {myDonateLevel === l.level && (
-              <div className="mt-3 text-xs font-montserrat font-700 px-2 py-1 rounded-full text-center" style={{background: l.color + '15', color: l.color}}>
-                Текущий ✓
+            {myLevel === l.level && (
+              <div className="mt-3 text-[10px] font-montserrat font-bold text-center py-1 rounded-full"
+                style={{ background: l.color + '15', color: l.color }}>
+                ✓ Текущий уровень
               </div>
             )}
           </div>
         ))}
       </div>
 
-      {/* Donation history */}
-      <div className="glass rounded-xl p-5">
-        <h2 className="font-montserrat font-700 mb-4">История донатов</h2>
-        {donations.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <Icon name="Gift" size={40} className="mx-auto mb-2 opacity-20" />
+      {/* History */}
+      <div className="card-base p-5">
+        <h2 className="font-montserrat font-bold mb-4">История донатов</h2>
+        {fetching ? (
+          <div className="space-y-2.5">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-14 rounded-xl animate-pulse" style={{ background: 'hsl(18 8% 12%)' }} />
+            ))}
+          </div>
+        ) : donations.length === 0 ? (
+          <div className="text-center py-10 text-muted-foreground">
+            <Icon name="Gift" size={40} className="mx-auto mb-3 opacity-10" />
             <p className="text-sm font-inter">История пуста</p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {donations.map(d => (
-              <div key={d.id} className="flex items-center gap-4 p-3 rounded-lg" style={{background: 'hsl(20 8% 13%)'}}>
-                <div className="text-2xl">{LEVELS[d.level]?.icon || '🎁'}</div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-montserrat font-600">{d.user?.username}</p>
-                  <p className="text-xs text-muted-foreground font-inter">
-                    Уровень {d.level} · Выдал: {d.granted_by?.username}
-                  </p>
-                  {d.note && <p className="text-xs text-muted-foreground font-inter italic mt-0.5">"{d.note}"</p>}
+          <div className="space-y-2.5">
+            {donations.map(d => {
+              const lv = LEVELS[Math.min(d.level, 3)];
+              return (
+                <div key={d.id} className="flex items-center gap-3.5 p-3.5 rounded-xl"
+                  style={{ background: 'hsl(18 8% 11%)', border: '1px solid hsl(18 8% 16%)' }}>
+                  <div className="text-2xl flex-shrink-0">{lv?.icon}</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-montserrat font-bold">{d.user?.username}</p>
+                    <p className="text-xs text-muted-foreground font-inter">
+                      Уровень {d.level} · Выдал: {d.granted_by?.username}
+                    </p>
+                    {d.note && <p className="text-xs text-muted-foreground font-inter italic">"{d.note}"</p>}
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <span className="badge text-[10px]" style={{ background: lv?.color + '15', color: lv?.color }}>
+                      {lv?.label}
+                    </span>
+                    {d.expires_at && (
+                      <p className="text-[9px] text-muted-foreground font-inter mt-1">
+                        до {new Date(d.expires_at).toLocaleDateString('ru-RU')}
+                      </p>
+                    )}
+                    <p className="text-[9px] text-muted-foreground font-inter">
+                      {new Date(d.created_at).toLocaleDateString('ru-RU')}
+                    </p>
+                  </div>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="font-montserrat font-700 text-sm" style={{color: LEVELS[d.level]?.color || '#f97316'}}>
-                    {LEVELS[d.level]?.label}
-                  </p>
-                  {d.expires_at && (
-                    <p className="text-[10px] text-muted-foreground font-inter">до {new Date(d.expires_at).toLocaleDateString('ru-RU')}</p>
-                  )}
-                  <p className="text-[10px] text-muted-foreground font-inter">{new Date(d.created_at).toLocaleDateString('ru-RU')}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
