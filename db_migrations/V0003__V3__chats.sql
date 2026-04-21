@@ -1,0 +1,1 @@
+CREATE TABLE chats (id SERIAL PRIMARY KEY, name VARCHAR(100) NOT NULL, description TEXT, chat_type VARCHAR(20) NOT NULL DEFAULT 'group', created_by INTEGER REFERENCES users(id), created_at TIMESTAMP DEFAULT NOW());

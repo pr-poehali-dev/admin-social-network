@@ -1,0 +1,1 @@
+CREATE TABLE chat_members (id SERIAL PRIMARY KEY, chat_id INTEGER NOT NULL, user_id INTEGER NOT NULL, joined_at TIMESTAMP DEFAULT NOW(), UNIQUE(chat_id, user_id)); CREATE TABLE messages (id SERIAL PRIMARY KEY, chat_id INTEGER NOT NULL, user_id INTEGER, content TEXT NOT NULL, created_at TIMESTAMP DEFAULT NOW());

@@ -1,0 +1,10 @@
+{
+  "tests": [
+    {
+      "name": "Auth alive",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 404
+    }
+  ]
+}
